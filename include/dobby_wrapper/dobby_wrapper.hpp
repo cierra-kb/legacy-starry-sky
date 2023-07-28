@@ -28,12 +28,7 @@ public:
         Hook hook_info;
 
         hook_info.hook_addr = reinterpret_cast<uintptr_t>(get_function_address(hook));
-
-        if constexpr (std::is_same<T, const char*>::value)
-            hook_info.original_addr = reinterpret_cast<uintptr_t>(get_symbol_address(target));
-        else
-            hook_info.original_addr = reinterpret_cast<uintptr_t>(get_function_address(target));
-        
+        hook_info.original_addr = reinterpret_cast<uintptr_t>(get_function_address(target));
         hook_info.prioity = P;
 
         this->_add_hook_to_list(std::move(hook_info));
