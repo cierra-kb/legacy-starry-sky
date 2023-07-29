@@ -50,7 +50,7 @@ void* get_function_address(T arg)
         if ((reinterpret_cast<uintptr_t>(dli.dli_fbase) > reinterpret_cast<uintptr_t>(addr) || dli.dli_fbase == nullptr) &&
             std::is_destructible<Class>::value
         ) {
-            return get_fn_addr_from_vftable<Class>(reinterpret_cast<uintptr_t>(addr));
+            return reinterpret_cast<uintptr_t>(get_fn_addr_from_vftable<Class>(reinterpret_cast<uintptr_t>(addr)));
         }
 
         return addr;

@@ -63,19 +63,6 @@ public:
     {
         auto hook_addr = reinterpret_cast<uintptr_t>(get_function_address(T));
 
-        if constexpr (std::is_member_function_pointer<decltype(T)>::value)
-        {
-            Dl_info dli = get_dlinfo_from_addr(reinterpret_cast<void*>(hook_addr));
-
-            using Class = typename method_info<decltype(T)>::class_t;
-
-            if ((reinterpret_cast<uintptr_t>(dli.dli_fbase) > reinterpret_cast<uintptr_t>(hook_addr) || dli.dli_fbase == nullptr) &&
-                std::is_destructible<Class>::value
-            ) {
-                hook_addr = reinterpret_cast<uintptr_t>(get_fn_addr_from_vftable<Class>(reinterpret_cast<uintptr_t>(hook_addr)));
-            }
-        }
-
         union {
             uintptr_t in;
             decltype(T) out;

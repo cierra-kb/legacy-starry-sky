@@ -5,18 +5,6 @@
 
 static DobbyWrapper* hook_manager;
 
-class LoadingLayer
-{
-public:
-    const char* getLoadingString();
-};
-
-const char* ll(LoadingLayer* self)
-{
-    return "hook test";
-}
-
-
 CCRect ccr(const CCPoint& origin, const CCSize& size)
 {
     CCRect rect;
@@ -29,10 +17,6 @@ CCRect ccr(const CCPoint& origin, const CCSize& size)
 class SpecialLevelEditorLayer : public LevelEditorLayer
 {
 public:
-    GameObject* subj;
-    CCLayerColor* highlight;
-    CCSize win_size;
-    
     static SpecialLevelEditorLayer* create(GJGameLevel* level)
     {
         auto r = new SpecialLevelEditorLayer();
@@ -70,11 +54,12 @@ public:
         visible_rect.size.width *= 1 / m_pLayer->getScale();
         visible_rect.size.height *= 1 / m_pLayer->getScale();
 
-        // fix blocks disappearing half way
-        visible_rect.origin.x -= HALF_BLOCK_UNIT;
-        visible_rect.origin.y -= HALF_BLOCK_UNIT;
-        visible_rect.size.width += BLOCK_UNIT;
-        visible_rect.size.height += BLOCK_UNIT;
+        // fix blocks disappearing where it shouldn't by extending the visible rect by a few blocks
+        visible_rect.origin.x -= BLOCK_UNIT * 2;
+        visible_rect.origin.y -= BLOCK_UNIT * 2;
+        
+        visible_rect.size.width += HALF_BLOCK_UNIT + (BLOCK_UNIT * 4);
+        visible_rect.size.height += HALF_BLOCK_UNIT + (BLOCK_UNIT * 4);
 
         if (!already_highlighted)
         {
@@ -105,33 +90,18 @@ public:
         }
     }
 
-    virtual void addToSection(GameObject* obj);
-
+    void addToSection(GameObject* obj)
+    {
+        hook_manager->orig<&SpecialLevelEditorLayer::addToSection>(this, obj);
+    }
 };
 
-void SpecialLevelEditorLayer::addToSection(GameObject* obj)
-{
-    return hook_manager->orig<&SpecialLevelEditorLayer::addToSection>(this, obj);
-}
 
-void SpecialLevelEditorLayerd_addToSection(SpecialLevelEditorLayer* self,  GameObject* obj)
-{
-    if (self == nullptr)
-        __android_log_print(ANDROID_LOG_DEBUG, "starry_sky", "THIS IS NULL");
-    
-    if (obj == nullptr)
-        __android_log_print(ANDROID_LOG_DEBUG, "starry_sky", "OBJ IS NULL");
-    
-    //hook_manager->orig<&SpecialLevelEditorLayerd_addToSection>(self, obj);
-    self->subj = obj;
-
-    __android_log_print(ANDROID_LOG_DEBUG, "starry_sky", "Object key: %i", obj->m_nObjectKey);
-}
 __attribute__((constructor))
 void starry_sky()
 {
     hook_manager = new DobbyWrapper();
-    //hook_manager.add_hook(&LoadingLayer::getLoadingString, &ll);
+
     hook_manager->add_hook(&LevelEditorLayer::addToSection, &SpecialLevelEditorLayer::addToSection);
     hook_manager->add_hook("_ZN16LevelEditorLayer4initEP11GJGameLevel", &SpecialLevelEditorLayer::init);
     hook_manager->add_hook("_ZN16LevelEditorLayer6createEP11GJGameLevel", &SpecialLevelEditorLayer::create);
