@@ -1,6 +1,8 @@
 #pragma once
 
+#include <android/log.h>
 #include <algorithm>
+#include <dlfcn.h>
 #include <vector>
 #include <unordered_map>
 
@@ -60,8 +62,27 @@ public:
     auto orig(args_t&&... args)
     {
         auto hook_addr = reinterpret_cast<uintptr_t>(get_function_address(T));
-        auto trampoline_fn = *reinterpret_cast<decltype(T)>(reinterpret_cast<void*>(_trampoline_addrs[hook_addr]));
 
-        return std::bind(trampoline_fn, args...)();
+        if constexpr (std::is_member_function_pointer<decltype(T)>::value)
+        {
+            Dl_info dli = get_dlinfo_from_addr(reinterpret_cast<void*>(hook_addr));
+
+            using Class = typename method_info<decltype(T)>::class_t;
+
+            if ((reinterpret_cast<uintptr_t>(dli.dli_fbase) > reinterpret_cast<uintptr_t>(hook_addr) || dli.dli_fbase == nullptr) &&
+                std::is_destructible<Class>::value
+            ) {
+                hook_addr = reinterpret_cast<uintptr_t>(get_fn_addr_from_vftable<Class>(reinterpret_cast<uintptr_t>(hook_addr)));
+            }
+        }
+
+        union {
+            uintptr_t in;
+            decltype(T) out;
+        } u = {
+            _trampoline_addrs[hook_addr]
+        };
+        
+        return std::bind(u.out, args...)();
     }
 };
