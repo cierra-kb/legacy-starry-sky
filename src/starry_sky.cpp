@@ -1,6 +1,5 @@
 #include <android/log.h>
 #include <cocos2dcpp.h>
-#include <fmod.hpp>
 #include <vector>
 
 #include "dobby_wrapper/dobby_wrapper.hpp"
@@ -238,8 +237,6 @@ void starry_sky()
     //hook_manager->add_hook("_ZN16LevelEditorLayer4initEP11GJGameLevel", &SpecialLevelEditorLayer::init, &SpecialLevelEditorLayer::init_O);
     //hook_manager->add_hook("_ZN16LevelEditorLayer6createEP11GJGameLevel", &SpecialLevelEditorLayer::create);
 
-    FMOD::System* fmsys;
-    FMOD::System_Create(&fmsys);
 
     //hook_manager->add_hook(&LevelEditorLayer::addToSection, &SpecialLevelEditorLayer::addToSection, &SpecialLevelEditorLayer::addToSection_O);
     //hook_manager->add_hook(&LevelEditorLayer::removeObject, &SpecialLevelEditorLayer::removeObject);
