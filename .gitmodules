@@ -1,6 +1,3 @@
-[submodule "submodules/gd-headers"]
-	path = submodules/gd-headers
-	url = https://github.com/Akqanile/android-gd-headers.git
 [submodule "submodules/dobby"]
 	path = submodules/dobby
 	url = https://github.com/jmpews/Dobby.git
