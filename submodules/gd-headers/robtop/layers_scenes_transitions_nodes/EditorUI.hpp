@@ -44,7 +44,7 @@ public:
     CCMenuItemSpriteExtra *m_pUndoBtn;
     CCMenuItemSpriteExtra *m_pRedoBtn;
     int frer[3];
-    const char *m_sSelectedObjectTextureNameMaybeIdkIFoundItOnCreate;
+    std::string m_sSelectedObjectTextureNameMaybeIdkIFoundItOnCreate;
     cocos2d::CCArray *m_pUnkArrayOnSetupCreateMenu;
     int m_eEditMode;
     LevelEditorLayer *m_pEditor;
@@ -71,4 +71,5 @@ public:
     void setupCreateMenu();
     CCNode* /*CreateMenuItem*/ getCreateBtn(const char* sprite, int button_sprite_id);
     void updateCreateMenu();
+    void onCreate();
 };

@@ -199,6 +199,15 @@ SpecialLevelEditorLayer::init_O_t SpecialLevelEditorLayer::init_O = nullptr;
 
 void EditorUI_setupCreateMenu(EditorUI* self)
 {
+    if (self->m_sSelectedObjectTextureNameMaybeIdkIFoundItOnCreate.empty())
+    {
+        typedef std::string* (*gd_string_assign_t)(void*, const char*, uint);
+        gd_string_assign_t gd_string_assign = reinterpret_cast<gd_string_assign_t>(reinterpret_cast<uintptr_t>(get_dlinfo_from_addr(get_function_address(&LevelEditorLayer::addToSection)).dli_fbase) + 0x2E1390);
+    
+        // this is fucking stupid
+        gd_string_assign((void*)&self->m_sSelectedObjectTextureNameMaybeIdkIFoundItOnCreate, " ", 1);
+    }
+    
     CCArray* unk_array = CCArray::create();
     self->m_pUnkArrayOnSetupCreateMenu = unk_array;
     unk_array->retain();
@@ -314,7 +323,7 @@ void EditorUI_setupCreateMenu(EditorUI* self)
 
     for (auto obj: objects)
     {
-        if (obj.first == "")
+        if (obj.first == "" || obj.second == 0)
         {
             auto node = CCNode::create();
             node->setTag(0);
@@ -340,7 +349,6 @@ void starry_sky()
     hook_manager = new DobbyWrapper();
 
     hook_manager->add_hook(&EditorUI::setupCreateMenu, &EditorUI_setupCreateMenu);
-
     //hook_manager->add_hook("_ZN16LevelEditorLayer4initEP11GJGameLevel", &SpecialLevelEditorLayer::init, &SpecialLevelEditorLayer::init_O);
     //hook_manager->add_hook("_ZN16LevelEditorLayer6createEP11GJGameLevel", &SpecialLevelEditorLayer::create);
 
