@@ -205,7 +205,96 @@ void EditorUI_setupCreateMenu(EditorUI* self)
 
     CCArray* obj_array = CCArray::create();
 
-    const std::vector<std::pair<const char*, int>> object_info = {
+    std::vector<std::pair<const char*, int>> objects = {
+        std::make_pair("square_01_001.png", 4),
+        std::make_pair("square_08_001.png", 4),
+        std::make_pair("square_02_001.png", 4),
+        std::make_pair("square_03_001.png", 4),
+        std::make_pair("square_04_001.png", 4),
+        std::make_pair("square_05_001.png", 4),
+        std::make_pair("square_06_001.png", 4),
+        std::make_pair("square_07_001.png", 4),
+
+        std::make_pair("spike_01_001.png", 4),
+        std::make_pair("spike_02_001.png", 4),
+        std::make_pair("pit_01_001.png", 4),
+        std::make_pair("pit_04_001.png", 4),
+
+        std::make_pair("plank_01_001.png", 4),
+
+        std::make_pair("square_b_01_001.png", 4),
+        std::make_pair("square_b_05_001.png", 4),
+        std::make_pair("square_b_04_001.png", 4),
+        std::make_pair("square_b_06_001.png", 4),
+
+        std::make_pair("bump_01_001.png", 4),
+        std::make_pair("gravbump_01_001.png", 4),
+        std::make_pair("ring_01_001.png", 4),
+        std::make_pair("gravring_01_001.png", 4),
+
+        std::make_pair("portal_01_front_001.png", 4),
+        std::make_pair("portal_02_front_001.png", 4),
+        std::make_pair("portal_03_front_001.png", 4),
+        std::make_pair("portal_04_front_001.png", 4),
+        std::make_pair("portal_05_front_001.png", 4),
+        std::make_pair("portal_06_front_001.png", 4),
+        std::make_pair("portal_07_front_001.png", 4),
+
+        std::make_pair("rod_01_001.png", 4),
+        std::make_pair("rod_02_001.png", 4),
+        std::make_pair("rod_03_001.png", 4),
+
+        std::make_pair("d_spikes_01_001.png", 4),
+        std::make_pair("d_spikes_02_001.png", 4),
+        std::make_pair("d_spikes_03_001.png", 4),
+        std::make_pair("d_spikes_04_001.png", 4),
+
+        std::make_pair("chain_01_001.png", 4),
+        std::make_pair("d_cloud_01_001.png", 4),
+        std::make_pair("d_cloud_02_001.png", 4),
+        std::make_pair("d_ball_01_001.png", 4),
+        std::make_pair("d_ball_02_001.png", 4),
+        std::make_pair("d_ball_03_001.png", 4),
+        std::make_pair("d_ball_04_001.png", 4),
+        std::make_pair("d_ball_05_001.png", 4),
+        std::make_pair("d_ball_06_001.png", 4),
+
+        std::make_pair("square_c_01_001.png", 4),
+        std::make_pair("square_c_02_001.png", 4),
+        std::make_pair("square_c_03_001.png", 4),
+        std::make_pair("square_c_04_001.png", 4),
+        std::make_pair("square_c_05_001.png", 4),
+        std::make_pair("square_c_06_001.png", 4),
+        std::make_pair("square_c_07_001.png", 4),
+
+        // force new page
+        std::make_pair("", 0),
+
+        std::make_pair("edit_eeNoneBtn_001.png", 4),
+        std::make_pair("edit_eeFTBtn_001.png", 4),
+        std::make_pair("edit_eeFBBtn_001.png", 4),
+        std::make_pair("edit_eeFLBtn_001.png", 4),
+        std::make_pair("edit_eeFRBtn_001.png", 4),
+        std::make_pair("edit_eeSUBtn_001.png", 4),
+        std::make_pair("edit_eeSDBtn_001.png", 4),
+        std::make_pair("edit_eeFALBtn_001.png", 4),
+        std::make_pair("edit_eeFARBtn_001.png", 4),
+        std::make_pair("edit_eeFRHBtn_001.png", 4),
+        std::make_pair("edit_eeFRHInvBtn_001.png", 4),
+
+        std::make_pair("", 0),
+
+        std::make_pair("edit_eTintBGBtn_001.png", 4),
+        std::make_pair("edit_eTintGBtn_001.png", 4),
+        std::make_pair("edit_eStartPosBtn_001.png", 4),
+        std::make_pair("edit_eGhostDBtn_001.png", 4),
+        std::make_pair("edit_eGhostEBtn_001.png", 4),
+
+        std::make_pair("", 0),
+
+        // unlisted blocks
+        std::make_pair("square_b_02_001.png", 4),
+        std::make_pair("square_b_03_001.png", 4),
         std::make_pair("square_d_01_001.png", 4),
         std::make_pair("square_d_02_001.png", 4),
         std::make_pair("square_d_03_001.png", 4),
@@ -213,20 +302,38 @@ void EditorUI_setupCreateMenu(EditorUI* self)
         std::make_pair("square_d_05_001.png", 4),
         std::make_pair("square_d_06_001.png", 4),
         std::make_pair("square_d_07_001.png", 4),
+
+        std::make_pair("", 0),
+
+        // unlisted triggers
+        std::make_pair("edit_eLevelEndBtn_001.png", 4),
+        std::make_pair("edit_eBGEOn_001.png", 4),
+        std::make_pair("edit_eBGEOff_001.png", 4),
+        std::make_pair("edit_eeFABtn_001.png", 4),
     };
 
-    for (auto obj: object_info)
+    for (auto obj: objects)
     {
-        obj_array->addObject(self->getCreateBtn(obj.first, obj.second));
+        if (obj.first == "")
+        {
+            auto node = CCNode::create();
+            node->setTag(0);
+            obj_array->addObject(node);
+        }
+        else
+        {
+            obj_array->addObject(self->getCreateBtn(obj.first, obj.second));
+        }
     }
 
     auto director = CCDirector::sharedDirector();
-    CCPoint unk_point = ccp(director->getWinSize().width / 2 - 5, 0 + self->m_fEditBarHeight - 6); // y should be from getscreenbottom() - float - 6, but this works fine
+    CCPoint unk_point = ccp(director->getWinSize().width / 2 - 5, 0 + self->m_fEditBarHeight - 6); // y should be getscreenbottom() - float - 6, but this works fine
 
     self->m_pEditButtonBarForCreateMenu = EditButtonBar::create(obj_array, unk_point);
     self->addChild(self->m_pEditButtonBarForCreateMenu, 10);
     self->updateCreateMenu();
 }
+
 __attribute__((constructor))
 void starry_sky()
 {
