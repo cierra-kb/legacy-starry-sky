@@ -1,4 +1,7 @@
 /.vscode
 /build
 
+submodules/fmod/*
+!submodules/fmod/.keep
+
 libgame.so

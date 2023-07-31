@@ -13,5 +13,6 @@ struct method_info<R (C::*)(A...)> {
 struct Hook {
     uintptr_t original_addr;
     uintptr_t hook_addr;
+    uintptr_t trampoline_addr;
     int32_t prioity;
 };
