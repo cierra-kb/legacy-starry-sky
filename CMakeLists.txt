@@ -11,11 +11,11 @@ add_library(starry_sky SHARED src/starry_sky.cpp)
 
 set(GD_HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/submodules/gd-headers)
 target_include_directories(starry_sky PRIVATE
-    ${GD_HEADERS_DIR}/cocos/cocos2dx/include
-    ${GD_HEADERS_DIR}/cocos/cocos2dx
-    ${GD_HEADERS_DIR}/cocos/cocos2dx/platform/android
-    ${GD_HEADERS_DIR}/cocos/cocos2dx/kazmath/include
-    ${GD_HEADERS_DIR}/gd
+    ${GD_HEADERS_DIR}/cocos2d/cocos2dx/include
+    ${GD_HEADERS_DIR}/cocos2d/cocos2dx
+    ${GD_HEADERS_DIR}/cocos2d/cocos2dx/platform/android
+    ${GD_HEADERS_DIR}/cocos2d/cocos2dx/kazmath/include
+    ${GD_HEADERS_DIR}/robtop
     ${GD_HEADERS_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
