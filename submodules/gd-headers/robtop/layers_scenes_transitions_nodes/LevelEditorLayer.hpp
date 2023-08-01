@@ -9,6 +9,7 @@ class DrawGridLayer : public cocos2d::CCLayer
 public:
     virtual ~DrawGridLayer();
     virtual void draw();
+    void addToEffects(GameObject*);
     void removeFromEffects(GameObject*);
 };
 class GJGameLevel;
@@ -53,6 +54,8 @@ public:
     void *m_pLevelSettings;
     unsigned int m_nDistance;
 
+    static LevelEditorLayer* create(GJGameLevel*);
+    
     virtual ~LevelEditorLayer();
     virtual void levelSettingsUpdated();
     virtual int getObjectCount() { return m_nObjectCount; }

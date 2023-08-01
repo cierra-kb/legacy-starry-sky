@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tuple>
+
 // we cant have a partial template specialization without a primary template
 template <typename _> struct method_info;
 

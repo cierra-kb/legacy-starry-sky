@@ -1,15 +1,23 @@
 #pragma once
 
-#include <android/log.h>
 #include <algorithm>
 #include <dlfcn.h>
 #include <vector>
 #include <unordered_map>
+#include <functional>
 
 #include "dobby_wrapper/types.hpp"
 #include "dobby_wrapper/utils.hpp"
 
 #include "dobby.h"
+
+class DobbyWrapper;
+
+class Module
+{
+public:
+    virtual void init(DobbyWrapper*) = 0;
+};
 
 class DobbyWrapper
 {
@@ -25,7 +33,7 @@ private:
 public:
 
     template <int32_t P = 0, typename T, typename H>
-    DobbyWrapper& add_hook(T target, H hook)
+    DobbyWrapper* add_hook(T target, H hook)
     {
         Hook hook_info;
 
@@ -35,7 +43,7 @@ public:
 
         this->_add_hook_to_list(std::move(hook_info));
 
-        return *this;
+        return this;
     }
 
     void install_hooks()
@@ -72,4 +80,11 @@ public:
         
         return std::bind(u.out, args...)();
     }
+
+    DobbyWrapper* add_module(Module* module)
+    {
+        module->init(this);
+        return this;
+    }
+
 };

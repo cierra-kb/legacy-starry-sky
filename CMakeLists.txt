@@ -7,7 +7,10 @@ set(ANDROID_STL gnustl_static)
 set(ANDROID_ABI armeabi)
 project(starry_sky)
 
-add_library(starry_sky SHARED src/starry_sky.cpp)
+add_library(starry_sky SHARED src/starry_sky.cpp
+    src/modules/editor.cpp
+    src/modules/misc.cpp
+    include/dobby_wrapper/utils.cpp)
 
 set(GD_HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/submodules/gd-headers)
 target_include_directories(starry_sky PRIVATE

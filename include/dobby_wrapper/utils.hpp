@@ -1,6 +1,9 @@
 #pragma once
 
 #include <dlfcn.h>
+#include <type_traits>
+
+#include "types.hpp"
 
 template <typename T>
 T member_by_offset(void* base, unsigned int offset)
@@ -8,19 +11,8 @@ T member_by_offset(void* base, unsigned int offset)
     return *reinterpret_cast<T*>(reinterpret_cast<uintptr_t>(base) + offset);
 }
 
-Dl_info get_dlinfo_from_addr(void* addr)
-{
-    Dl_info dli;
-
-    dladdr(addr, &dli);
-    return dli;
-}
-
-void* get_fn_addr_from_symbol(const char* lib, const char* sym)
-{
-    auto handle = dlopen(lib, RTLD_NOW);
-    return dlsym(handle, sym);
-}
+Dl_info get_dlinfo_from_addr(void* addr);
+void* get_fn_addr_from_symbol(const char* lib, const char* sym);
 
 template <typename T>
 void* get_fn_addr_from_vftable(uintptr_t offset)
