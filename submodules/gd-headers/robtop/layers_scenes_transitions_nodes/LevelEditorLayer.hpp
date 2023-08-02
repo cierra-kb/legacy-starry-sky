@@ -37,6 +37,12 @@ public:
     virtual UndoCommand getCommand();
 };
 
+class LevelSettingsObject : public CCObject
+{
+public:
+    static LevelSettingsObject* objectFromString(std::string);
+};
+
 using namespace cocos2d;
 
 class LevelEditorLayer : public CCLayer, public ColorPickerDelegate
@@ -51,7 +57,7 @@ public:
     int m_nObjectCount;
     CCLayer *m_pLayer;
     GJGameLevel *m_pLevel;
-    void *m_pLevelSettings;
+    LevelSettingsObject *m_pLevelSettings;
     unsigned int m_nDistance;
 
     static LevelEditorLayer* create(GJGameLevel*);
@@ -66,6 +72,8 @@ public:
     virtual unsigned int getLevelDistance() { return m_nDistance; }
 
     bool init(GJGameLevel* level);
+    void createObjectsFromSetup(std::string);
+
     void addToSection(GameObject* obj);
     void addToUndoList(UndoObject* obj);
     void removeObjectFromSection(GameObject* obj);

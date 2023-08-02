@@ -52,6 +52,8 @@ public:
 	int m_nObjectZ;
 	CCNode *m_pObjectParent;
 
+	static GameObject* objectFromString(std::string);
+	
 	virtual ~GameObject();
 
 	virtual void update(float dt);

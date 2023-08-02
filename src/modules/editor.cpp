@@ -66,10 +66,16 @@ void UpdatableLevelEditorLayer::update(float dt)
     //{
     //    auto d = CCLayerColor::create(ccColor4B{255, 0, 0, 125}, visible_rect.size.width - BLOCK_UNIT, visible_rect.size.height - BLOCK_UNIT);
     //    m_pLayer->addChild(d);
+    //    d->setTag(727);
     //    d->setPosition(visible_rect.origin.x + HALF_BLOCK_UNIT, visible_rect.origin.y + HALF_BLOCK_UNIT);
     //    already_highlighted = true;
+    //    __android_log_print(ANDROID_LOG_DEBUG, "starry_log_sky", "VR %f %f", d->getPositionX(), d->getPositionY()); 
     //}
-    
+    //else
+    //{
+    //    m_pLayer->getChildByTag(727)->setPosition(visible_rect.origin.x + HALF_BLOCK_UNIT, visible_rect.origin.y + HALF_BLOCK_UNIT);
+    //}
+
     //if (move_prev_line)
     //{
     //    auto speed = SPEEDS[Speed::Normal];
@@ -90,16 +96,27 @@ void UpdatableLevelEditorLayer::update(float dt)
             if (CCRect::CCRectContainsPoint(visible_rect, object_pos))
             {
                 if (!object->getParent())
-                    m_pBatchNode->addChild(object);
-                
-                object->setVisible(true);
+                {
+                    OrderingData* s = (OrderingData*)object->getUserData();
+
+                    m_pBatchNode->addChild(object, s->z_order);
+                    object->setOrderOfArrival(s->order_of_arrival);
+
+                    m_pBatchNode->sortAllChildren();
+                }
             }
             else
             {
                 if (object->getParent())
-                    m_pBatchNode->removeChild(object, false);
+                {
+                    if (object->getUserData() == nullptr)
+                    {
+                        OrderingData s = OrderingData {object->getOrderOfArrival(), object->getZOrder()};
+                        object->setUserData((void*)&s);
+                    }
 
-                object->setVisible(false);
+                    m_pBatchNode->removeChild(object, false);
+                }
             }
         }
     }
@@ -269,6 +286,45 @@ void EditorUI_setupCreateMenu(EditorUI* self)
     self->updateCreateMenu();
 }
 
+void LevelEditorLayer_createObjectsFromSetup(UpdatableLevelEditorLayer* self, std::string str)
+{
+    if (str.empty() || str.c_str() == " ")
+        return;
+    
+    int s_globalOrderOfArrival = *reinterpret_cast<int*>(reinterpret_cast<uintptr_t>(get_dlinfo_from_addr(get_function_address(&LevelEditorLayer::createObjectsFromSetup)).dli_fbase) + 0x430C4C);
+    
+    // We have to recreate gd's std::strings to avoid crashes.
+    // To give our std::strings to gd, we have to recreate them by creating a CCString then getting the m_sString variable.
+
+    std::stringstream ss(
+        std::string(str.c_str())
+    );
+    std::string split_buffer;
+
+    if (!std::getline(ss, split_buffer, ';'))
+        return; // no level settings string?
+
+    self->m_pLevelSettings = LevelSettingsObject::objectFromString(
+        CCString::createWithFormat("%s", split_buffer.c_str())->m_sString
+    );
+    self->m_pLevelSettings->retain();
+
+    while (std::getline(ss, split_buffer, ';'))
+    {
+        std::string objstr = CCString::createWithFormat("%s", split_buffer.c_str())->m_sString;
+        GameObject* obj = GameObject::objectFromString(objstr);
+        
+        OrderingData s = OrderingData {s_globalOrderOfArrival++, obj->getZOrder()};
+        obj->setUserData((void*)&s);
+        obj->retain();
+
+        self->addToSection(obj);
+
+        if (obj->getType() == 7 && obj->getShouldSpawn())
+            self->m_pGrid->addToEffects(obj);
+    }
+}
+
 void EditorModule::init(DobbyWrapper* hook_manager)
 {
     hook_manager
@@ -276,5 +332,6 @@ void EditorModule::init(DobbyWrapper* hook_manager)
         ->add_hook(&LevelEditorLayer::init, &LevelEditorLayer_init)
         ->add_hook(&DrawGridLayer::addToEffects, &DrawGridLayer_addToEffects)
         ->add_hook(&DrawGridLayer::removeFromEffects, &DrawGridLayer_removeFromEffects)
-        ->add_hook(&EditorUI::setupCreateMenu, &EditorUI_setupCreateMenu);
+        ->add_hook(&EditorUI::setupCreateMenu, &EditorUI_setupCreateMenu)
+        ->add_hook(&LevelEditorLayer::createObjectsFromSetup, &LevelEditorLayer_createObjectsFromSetup);
 };
