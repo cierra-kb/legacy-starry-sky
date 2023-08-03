@@ -16,8 +16,26 @@ bool LevelInfoLayer_init(LevelInfoLayer* self, GJGameLevel* lvl)
     return true;
 }
 
+bool pugi__xml_document__save_file(void* self, const char* a2, const char* a3, uint a4, int a5)
+{
+    rename(a2, CCString::createWithFormat("%s.bak", a2)->getCString());
+    return starry_sky::get_hook_manager()->orig<&pugi__xml_document__save_file>(self, a2, a3, a4, a5);
+}
+
+bool ds_dictionary__loadRootSubDictFromFile(void* self, const char* a2)
+{
+    if (starry_sky::get_hook_manager()->orig<&ds_dictionary__loadRootSubDictFromFile>(self, a2))
+        return true;
+
+    a2 = CCString::createWithFormat("%s.bak", a2)->getCString();
+
+    return starry_sky::get_hook_manager()->orig<&ds_dictionary__loadRootSubDictFromFile>(self, a2);
+}
+
 void MiscModule::init(DobbyWrapper* hook_manager)
 {
     hook_manager
-        ->add_hook(&LevelInfoLayer::init, &LevelInfoLayer_init);
+        ->add_hook(&LevelInfoLayer::init, &LevelInfoLayer_init)
+        ->add_hook("_ZN13DS_Dictionary23loadRootSubDictFromFileEPKc", &ds_dictionary__loadRootSubDictFromFile)
+        ->add_hook("_ZNK4pugi12xml_document9save_fileEPKcS2_jNS_12xml_encodingE", &pugi__xml_document__save_file);
 }
