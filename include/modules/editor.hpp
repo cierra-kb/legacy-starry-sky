@@ -2,16 +2,33 @@
 #define __EDITOR_HPP__
 
 #include <cocos2dcpp.h>
+#include "consts.hpp"
 #include "starry_sky.hpp"
-
-const int BG_TRIGGER_ID = 9;
-const uint HALF_BLOCK_UNIT = 15;
-const uint BLOCK_UNIT = HALF_BLOCK_UNIT * 2;
 
 struct OrderingData
 {
     int order_of_arrival;
     int z_order;
+};
+
+class UpdatableLevelEditorLayer : public LevelEditorLayer
+{
+public:
+    static LevelEditorLayer* create(GJGameLevel* lvl)
+    {
+        auto ulel = new UpdatableLevelEditorLayer();
+
+        if (ulel->init(lvl))
+        {
+            ulel->autorelease();
+            return ulel;
+        }
+
+        delete ulel;
+        return nullptr;
+    }
+
+    virtual void update(float dt) override;
 };
 
 class EditorModule : public Module

@@ -1,33 +1,18 @@
 #include "modules/editor.hpp"
 
+UpdatableLevelEditorLayer* ulel;
+
 std::vector<GameObject*> bg_col_triggers;
 //CCSprite* background_sprite;
 //CCLayerColor* preview_line;
 
-class UpdatableLevelEditorLayer : public LevelEditorLayer
-{
-public:
-    static LevelEditorLayer* create(GJGameLevel* lvl)
-    {
-        auto ulel = new UpdatableLevelEditorLayer();
-
-        if (ulel->init(lvl))
-        {
-            ulel->autorelease();
-            return ulel;
-        }
-
-        delete ulel;
-        return nullptr;
-    }
-
-    virtual void update(float dt) override;
-};
-
 bool LevelEditorLayer_init(LevelEditorLayer* self, GJGameLevel* lvl)
 {
-    starry_sky::get_hook_manager()->orig<&LevelEditorLayer_init>(self, lvl);
-    
+    if (!starry_sky::get_hook_manager()->orig<&LevelEditorLayer_init>(self, lvl))
+        return false;
+
+    ulel = (UpdatableLevelEditorLayer*)self;
+
     //auto win_size = CCDirector::sharedDirector()->getWinSize();
     
     //preview_line = CCLayerColor::create(ccColor4B{255,255,255,125}, 2, win_size.height);
@@ -325,6 +310,20 @@ void LevelEditorLayer_createObjectsFromSetup(UpdatableLevelEditorLayer* self, st
     }
 }
 
+void EditorPauseLayer_customSetup(EditorPauseLayer* self)
+{
+    starry_sky::get_hook_manager()->orig<&EditorPauseLayer_customSetup>(self);
+
+    CCString* info_text = CCString::createWithFormat("%i objects", ulel->m_nObjectCount);
+    CCLabelBMFont* info_label = CCLabelBMFont::create(info_text->getCString(), "bigFont.fnt");
+    
+    info_label->setAnchorPoint({0, 0.0});
+    info_label->setPosition({5, CCDirector::sharedDirector()->getWinSize().height - 50});
+    info_label->setScale(0.5);
+
+    self->addChild(info_label);
+}
+
 void EditorModule::init(DobbyWrapper* hook_manager)
 {
     hook_manager
@@ -333,5 +332,6 @@ void EditorModule::init(DobbyWrapper* hook_manager)
         ->add_hook(&DrawGridLayer::addToEffects, &DrawGridLayer_addToEffects)
         ->add_hook(&DrawGridLayer::removeFromEffects, &DrawGridLayer_removeFromEffects)
         ->add_hook(&EditorUI::setupCreateMenu, &EditorUI_setupCreateMenu)
-        ->add_hook(&LevelEditorLayer::createObjectsFromSetup, &LevelEditorLayer_createObjectsFromSetup);
+        ->add_hook(&LevelEditorLayer::createObjectsFromSetup, &LevelEditorLayer_createObjectsFromSetup)
+        ->add_hook(&EditorPauseLayer::customSetup, &EditorPauseLayer_customSetup);
 };
