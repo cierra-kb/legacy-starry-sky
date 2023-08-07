@@ -21,6 +21,25 @@ bool LevelEditorLayer_init(LevelEditorLayer* self, GJGameLevel* lvl)
 
     //background_sprite = (CCSprite*) self->getChildren()->objectAtIndex(1);
 
+    if (Settings::instance()->is_option_enabled("object_bypass"))
+    {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(
+                get_dlinfo_from_addr(get_function_address(&EditorUI::setupCreateMenu)).dli_fbase
+            ) + 0x156B7C),
+            std::vector<uint8_t>({0x00, 0xbf}).data(), 2
+        );
+    }
+    else
+    {
+        DobbyCodePatch(
+            reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(
+                get_dlinfo_from_addr(get_function_address(&EditorUI::setupCreateMenu)).dli_fbase
+            ) + 0x156B7C),
+            std::vector<uint8_t>({0x07, 0xdc}).data(), 2
+        );
+    }
+
     if (Settings::instance()->is_option_enabled("16k_fix"))
         self->scheduleUpdate();
 

@@ -58,7 +58,7 @@ void Settings::set_option_enabled(std::string key, bool enable)
 bool Settings::init()
 {
     _options = {
-        //Option {"object_bypass"},
+        Option {"object_bypass"},
         Option {"16k_fix"},
         Option {"unlisted_objects"},
         Option {"level_copying"},
