@@ -76,6 +76,6 @@ void MiscModule::init(DobbyWrapper* hook_manager)
         ->add_hook(&LevelInfoLayer::init, &LevelInfoLayer_init)
         //->add_hook("_ZN13DS_Dictionary23loadRootSubDictFromFileEPKc", &ds_dictionary__loadRootSubDictFromFile)
         //->add_hook("_ZNK4pugi12xml_document9save_fileEPKcS2_jNS_12xml_encodingE", &pugi__xml_document__save_file)
-        ->add_hook("_ZN12OptionsLayer11customSetupEv", &OptionsLayer_customSetup)
-        ->add_hook("_ZN7cocos2d10CCDirector21setContentScaleFactorEf", &d);
+        ->add_hook("_ZN12OptionsLayer11customSetupEv", &OptionsLayer_customSetup);
+        //->add_hook("_ZN7cocos2d10CCDirector21setContentScaleFactorEf", &d);
 }
