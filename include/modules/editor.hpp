@@ -4,6 +4,7 @@
 #include <cocos2dcpp.h>
 #include "consts.hpp"
 #include "starry_sky.hpp"
+#include "ui/menu_settings.hpp"
 
 struct OrderingData
 {

@@ -21,7 +21,8 @@ bool LevelEditorLayer_init(LevelEditorLayer* self, GJGameLevel* lvl)
 
     //background_sprite = (CCSprite*) self->getChildren()->objectAtIndex(1);
 
-    self->scheduleUpdate();
+    if (Settings::instance()->is_option_enabled("16k_fix"))
+        self->scheduleUpdate();
 
     return true;
 }
@@ -85,7 +86,7 @@ void UpdatableLevelEditorLayer::update(float dt)
                     OrderingData* s = (OrderingData*)object->getUserData();
 
                     m_pBatchNode->addChild(object, s->z_order);
-                    object->setOrderOfArrival(s->order_of_arrival);
+                    //object->setOrderOfArrival(s->order_of_arrival);
 
                     m_pBatchNode->sortAllChildren();
                 }
@@ -107,6 +108,7 @@ void UpdatableLevelEditorLayer::update(float dt)
     }
 }
 
+/*
 void DrawGridLayer_addToEffects(DrawGridLayer* self, GameObject* obj)
 {
     starry_sky::get_hook_manager()->orig<&DrawGridLayer_addToEffects>(self, obj);
@@ -124,9 +126,13 @@ void DrawGridLayer_removeFromEffects(DrawGridLayer* self, GameObject* obj)
         if (auto it = std::find(bg_col_triggers.begin(), bg_col_triggers.end(), obj); it != bg_col_triggers.end())
             bg_col_triggers.erase(it);
 }
+*/
 
 void EditorUI_setupCreateMenu(EditorUI* self)
 {
+    if (!Settings::instance()->is_option_enabled("unlisted_objects"))
+        return starry_sky::get_hook_manager()->orig<&EditorUI_setupCreateMenu>(self);
+    
     if (self->m_sSelectedObjectTextureNameMaybeIdkIFoundItOnCreate.empty())
     {
         typedef std::string* (*gd_string_assign_t)(void*, const char*, uint);
@@ -273,6 +279,9 @@ void EditorUI_setupCreateMenu(EditorUI* self)
 
 void LevelEditorLayer_createObjectsFromSetup(UpdatableLevelEditorLayer* self, std::string str)
 {
+    if (!Settings::instance()->is_option_enabled("16k_fix"))
+        return starry_sky::get_hook_manager()->orig<&LevelEditorLayer_createObjectsFromSetup>(self, str);
+    
     if (str.empty() || str.c_str() == " ")
         return;
     
@@ -314,14 +323,17 @@ void EditorPauseLayer_customSetup(EditorPauseLayer* self)
 {
     starry_sky::get_hook_manager()->orig<&EditorPauseLayer_customSetup>(self);
 
-    CCString* info_text = CCString::createWithFormat("%i objects", ulel->m_nObjectCount);
-    CCLabelBMFont* info_label = CCLabelBMFont::create(info_text->getCString(), "bigFont.fnt");
-    
-    info_label->setAnchorPoint({0, 0.0});
-    info_label->setPosition({5, CCDirector::sharedDirector()->getWinSize().height - 50});
-    info_label->setScale(0.5);
+    if (Settings::instance()->is_option_enabled("object_counter"))
+    {
+        CCString* info_text = CCString::createWithFormat("%i objects", ulel->m_nObjectCount);
+        CCLabelBMFont* info_label = CCLabelBMFont::create(info_text->getCString(), "bigFont.fnt");
+        
+        info_label->setAnchorPoint({0, 0});
+        info_label->setPosition({5, CCDirector::sharedDirector()->getWinSize().height - 20});
+        info_label->setScale(0.5);
 
-    self->addChild(info_label);
+        self->addChild(info_label);
+    }
 }
 
 void EditorModule::init(DobbyWrapper* hook_manager)
@@ -329,8 +341,8 @@ void EditorModule::init(DobbyWrapper* hook_manager)
     hook_manager
         ->add_hook("_ZN16LevelEditorLayer6createEP11GJGameLevel", &UpdatableLevelEditorLayer::create)
         ->add_hook(&LevelEditorLayer::init, &LevelEditorLayer_init)
-        ->add_hook(&DrawGridLayer::addToEffects, &DrawGridLayer_addToEffects)
-        ->add_hook(&DrawGridLayer::removeFromEffects, &DrawGridLayer_removeFromEffects)
+        //->add_hook(&DrawGridLayer::addToEffects, &DrawGridLayer_addToEffects)
+        //->add_hook(&DrawGridLayer::removeFromEffects, &DrawGridLayer_removeFromEffects)
         ->add_hook(&EditorUI::setupCreateMenu, &EditorUI_setupCreateMenu)
         ->add_hook(&LevelEditorLayer::createObjectsFromSetup, &LevelEditorLayer_createObjectsFromSetup)
         ->add_hook(&EditorPauseLayer::customSetup, &EditorPauseLayer_customSetup);

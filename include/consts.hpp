@@ -21,5 +21,13 @@ constexpr Speed_info SPEEDS[5] = {
 const int BG_TRIGGER_ID = 9;
 const uint HALF_BLOCK_UNIT = 15;
 const uint BLOCK_UNIT = HALF_BLOCK_UNIT * 2;
-
+/*
+const Option MOD_OPTIONS[5] = {
+    Option {"object_bypass", "Object bypass"},
+    Option {"16k_fix", "16k fix"},
+    Option {"unlisted_objects", "Unlisted objects"},
+    Option {"level_copying", "Level copying"},
+    Option {"object_counter", "Object counter"}
+};
+*/
 #endif

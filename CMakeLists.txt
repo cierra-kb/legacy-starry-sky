@@ -7,10 +7,12 @@ set(ANDROID_STL gnustl_static)
 set(ANDROID_ABI armeabi)
 project(starry_sky)
 
-add_library(starry_sky SHARED src/starry_sky.cpp
+add_library(starry_sky SHARED src/starry_sky.cpp src/settings.cpp src/ui/menu_settings.cpp src/ui/components/option.cpp
     src/modules/editor.cpp
     src/modules/misc.cpp
-    include/dobby_wrapper/utils.cpp)
+    include/dobby_wrapper/utils.cpp
+    submodules/sqlite/sqlite3.c
+    submodules/sqlite/shell.c)
 
 set(GD_HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/submodules/gd-headers)
 target_include_directories(starry_sky PRIVATE
@@ -20,7 +22,8 @@ target_include_directories(starry_sky PRIVATE
     ${GD_HEADERS_DIR}/cocos2d/cocos2dx/kazmath/include
     ${GD_HEADERS_DIR}/robtop
     ${GD_HEADERS_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/submodules/sqlite)
 
 set(DOBBY_DEBUG OFF CACHE INTERNAL "" FORCE)
 set(DOBBY_GENERATE_SHARED OFF CACHE INTERNAL "" FORCE)

@@ -23,6 +23,7 @@ public:
     bool m_bReverseKeyBack;
     CCLayer *m_pInternalLayer;
 
+    static FLAlertLayer* create(FLAlertLayerProtocol*, const char* title, const char* desc, const char* bnt1, const char* bnt2, float width);
     virtual ~FLAlertLayer();
     virtual bool ccTouchBegan(CCTouch *pTouch, CCEvent *pEvent);
     virtual void ccTouchMoved(CCTouch *pTouch, CCEvent *pEvent);
