@@ -65,17 +65,26 @@ void OptionsLayer_customSetup(void* self)
     ((CCNode*)self)->addChild(menu);
 }
 
-void d(void* self, float s)
+bool CCString_initWithFormatAndValist(CCString* self, const char* format, va_list ap)
 {
-    starry_sky::get_hook_manager()->orig<&d>(self, 1.0);
+    size_t buf_size = static_cast<size_t>(vsnprintf(nullptr, 0, format, ap)) + 1;
+    char* buf = static_cast<char*>(malloc(buf_size));
+
+    std::vsprintf(buf, format, ap);
+
+    typedef std::string* (*gd_string_assign_t)(void*, const char*, uint);
+    gd_string_assign_t gd_string_assign = reinterpret_cast<gd_string_assign_t>(reinterpret_cast<uintptr_t>(get_dlinfo_from_addr(get_function_address(&LevelEditorLayer::addToSection)).dli_fbase) + 0x2E1390);
+    gd_string_assign((void*)&self->m_sString, buf, buf_size - 1);
+
+    free(buf);
+
+    return true;
 }
 
 void MiscModule::init(DobbyWrapper* hook_manager)
 {
     hook_manager
         ->add_hook(&LevelInfoLayer::init, &LevelInfoLayer_init)
-        //->add_hook("_ZN13DS_Dictionary23loadRootSubDictFromFileEPKc", &ds_dictionary__loadRootSubDictFromFile)
-        //->add_hook("_ZNK4pugi12xml_document9save_fileEPKcS2_jNS_12xml_encodingE", &pugi__xml_document__save_file)
-        ->add_hook("_ZN12OptionsLayer11customSetupEv", &OptionsLayer_customSetup);
-        //->add_hook("_ZN7cocos2d10CCDirector21setContentScaleFactorEf", &d);
+        ->add_hook("_ZN12OptionsLayer11customSetupEv", &OptionsLayer_customSetup)
+        ->add_hook("_ZN7cocos2d8CCString23initWithFormatAndValistEPKcSt9__va_list", &CCString_initWithFormatAndValist);
 }
