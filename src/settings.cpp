@@ -11,6 +11,7 @@ int Settings::_parse_enabled_option_row(
     if (!option)
     {
         LOG("Settings (_parse_enabled_option_row) - Unknown enabled option (%s), ignoring.", key.c_str());
+        return 0;
     }
 
     obj->_enabled_options.push_back(option);
