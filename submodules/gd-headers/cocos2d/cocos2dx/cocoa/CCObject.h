@@ -27,6 +27,8 @@ THE SOFTWARE.
 
 #include "platform/CCPlatformMacros.h"
 
+class DS_Dictionary;
+
 NS_CC_BEGIN
 
 /**
@@ -40,8 +42,6 @@ class CCNode;
 class CCEvent;
 
 CC_GD_ADD_BEGIN
-
-class DS_Dictionary;
 
 enum CCObjectType
 {
