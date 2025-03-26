@@ -12,11 +12,11 @@ Build requirements:
 ```
 git clone https://github.com/cierra-kb/legacy-starry-sky.git --recursive
 ```
-3. Download and Extract the NDK somewhere. Afterwards, save its path to ANDROID_NDK_ROOT
+2. Download and Extract the NDK somewhere. Afterwards, save its path to ANDROID_NDK_ROOT
 ```
 export ANDROID_NDK_ROOT=~/NDK/r16b
 ```
-4. Run `make`
+3. Run `make`
 
 ## Licensing
 This project is licensed under the [Mozilla Public License 2.0](https://www.mozilla.org/en-US/MPL/2.0/).
