@@ -4,7 +4,7 @@
 #include "layers_scenes_transitions_nodes/CCLayer.h"
 #include "touch_dispatcher/CCTouch.h"
 
-NS_CC_BEGIN
+USING_NS_CC;
 
 class CCBlockLayer : public CCLayerColor {
 public:
@@ -31,7 +31,5 @@ public:
     virtual bool getRemoveOnEdit();
     virtual void setRemoveOnExit();
 };
-
-NS_CC_END
 
 #endif
